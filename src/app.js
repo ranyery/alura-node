@@ -1,25 +1,25 @@
 import express from "express";
 import { StatusCodes as STATUS_CODES } from "http-status-codes";
 
+import db from "./config/dbConnect.js";
+import livros from "./models/Livro.js";
+
+db.on("error", (e) => console.log.bind(console, e));
+db.once("open", () => {
+  console.log("🟢 Conexão com o banco realizada com sucesso!");
+});
+
 const app = express();
 app.use(express.json());
-
-const livros = [
-  {
-    id: 1,
-    title: "Meu Pé de Laranja Lima",
-    author: "José Mauro de Vasconcelos",
-  },
-  { id: 2, title: "O Mundo de Sofia", author: "Jostein Gaarder" },
-  { id: 3, title: "A História sem fim", author: "Michael Ende" },
-];
 
 app.get("/", (req, res) => {
   res.send("Curso de NodeJS");
 });
 
 app.get("/livros", (req, res) => {
-  res.json(livros);
+  livros.find((error, livros) => {
+    res.json(livros);
+  });
 });
 
 app.get("/livros/:id", (req, res) => {
@@ -30,7 +30,7 @@ app.get("/livros/:id", (req, res) => {
     return;
   }
 
-  let indiceLivroEncontrado = buscaIndiceLivro(id);
+  const indiceLivroEncontrado = buscaIndiceLivro(id);
   if (indiceLivroEncontrado === -1) {
     res
       .status(STATUS_CODES.NOT_FOUND)
