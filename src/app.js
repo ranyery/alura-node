@@ -36,28 +36,6 @@ app.get("/livros/:id", (req, res) => {
   res.status(STATUS_CODES.OK).json(livroEncontrado);
 });
 
-app.put("/livros/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const title = req.body.title;
-
-  if (isNaN(id) || id <= 0 || !title) {
-    res.status(STATUS_CODES.BAD_REQUEST).send();
-    return;
-  }
-
-  const indiceLivroEncontrado = buscaIndiceLivro(id);
-  if (indiceLivroEncontrado === -1) {
-    res
-      .status(STATUS_CODES.NOT_FOUND)
-      .json({ message: "Livro não encontrado!" });
-    return;
-  }
-
-  livros[indiceLivroEncontrado].title = title;
-
-  res.status(STATUS_CODES.NO_CONTENT).send();
-});
-
 app.delete("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
 

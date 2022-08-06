@@ -1,21 +1,14 @@
 // @ts-check
 import livros from "../models/Livro.js";
-import {
-  StatusCodes as STATUS_CODES,
-  getReasonPhrase,
-} from "http-status-codes";
+import { StatusCodes as STATUS_CODES } from "http-status-codes";
 import { objectHasRequiredProperties } from "../utils/utils.js";
 
 class livrosController {
   static listarLivros = (req, res) => {
     livros.find((error, livros) => {
-      if (error) {
-        return res
-          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-          .send({ error: getReasonPhrase(STATUS_CODES.INTERNAL_SERVER_ERROR) });
-      }
+      if (error) return internalServerError(res, error);
 
-      res.status(STATUS_CODES.OK).json(livros);
+      res.send(livros); // StatusCode 200 is set by default
     });
   };
 
@@ -27,23 +20,43 @@ class livrosController {
       objectHasRequiredProperties(body, requiredProperties);
 
     if (!hasRequiredProperties) {
-      return res
-        .status(STATUS_CODES.BAD_REQUEST)
-        .send({ error: `Property '${missingProperty}' is required.` });
+      const message = `Property '${missingProperty}' is required.`;
+      return badRequest(res, message);
     }
 
     const livro = new livros(body);
     livro.save((error) => {
-      if (error) {
-        res
-          .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-          .send({ error: getReasonPhrase(STATUS_CODES.INTERNAL_SERVER_ERROR) });
-        return;
-      }
+      if (error) return internalServerError(res, error);
 
       res.status(STATUS_CODES.CREATED).send(livro.toJSON());
     });
   };
+
+  static atualizarLivro = (req, res) => {
+    const id = req.params["id"];
+
+    const bodyProperties = Object.keys(req.body);
+    if (bodyProperties.length === 0) {
+      const message = "Empty request body.";
+      return badRequest(res, message);
+    }
+
+    livros.findByIdAndUpdate(id, { $set: req.body }, (error) => {
+      if (error) return internalServerError(res, error);
+
+      res.send({ message: "Book successfully updated." });
+    });
+  };
+}
+
+function internalServerError(res, error) {
+  return res
+    .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
+    .send({ error: error.message });
+}
+
+function badRequest(res, message) {
+  return res.status(STATUS_CODES.BAD_REQUEST).send({ error: message });
 }
 
 export default livrosController;
