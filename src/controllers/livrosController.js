@@ -6,24 +6,30 @@ import { badRequest, internalServerError } from "../utils/httpErrorHandler.js";
 
 class livrosController {
   static listarLivros = (req, res) => {
-    livros.find((error, result) => {
-      if (error) return internalServerError(res, error);
+    livros
+      .find()
+      .populate("author")
+      .exec((error, result) => {
+        if (error) return internalServerError(res, error);
 
-      res.send(result); // StatusCode 200 is set by default
-    });
+        res.send(result); // StatusCode 200 is set by default
+      });
   };
 
   static listaLivroPorId = (req, res) => {
     const id = req.params["id"];
 
-    livros.findById(id, (error, result) => {
-      if (error) {
-        const message = "Book not found.";
-        return badRequest(res, message);
-      }
+    livros
+      .findById(id)
+      .populate("author", "name")
+      .exec((error, result) => {
+        if (error) {
+          const message = "Book not found.";
+          return badRequest(res, message);
+        }
 
-      res.send(result);
-    });
+        res.send(result);
+      });
   };
 
   static cadastrarLivro = (req, res) => {
