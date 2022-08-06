@@ -16,26 +16,6 @@ app.use(express.json());
 
 routes(app);
 
-app.get("/livros/:id", (req, res) => {
-  const id = Number(req.params.id);
-
-  if (isNaN(id) || id <= 0) {
-    res.status(STATUS_CODES.BAD_REQUEST).send();
-    return;
-  }
-
-  const indiceLivroEncontrado = buscaIndiceLivro(id);
-  if (indiceLivroEncontrado === -1) {
-    res
-      .status(STATUS_CODES.NOT_FOUND)
-      .json({ message: "Livro não encontrado!" });
-    return;
-  }
-
-  const livroEncontrado = livros[indiceLivroEncontrado];
-  res.status(STATUS_CODES.OK).json(livroEncontrado);
-});
-
 app.delete("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
 

@@ -12,6 +12,19 @@ class livrosController {
     });
   };
 
+  static listaLivroPorId = (req, res) => {
+    const id = req.params["id"];
+
+    livros.findById(id, (error, result) => {
+      if (error) {
+        const message = "Book not found.";
+        return badRequest(res, message);
+      }
+
+      res.send(result);
+    });
+  };
+
   static cadastrarLivro = (req, res) => {
     const body = req.body;
     const requiredProperties = ["title", "author", "price"];
