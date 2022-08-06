@@ -36,17 +36,6 @@ app.get("/livros/:id", (req, res) => {
   res.status(STATUS_CODES.OK).json(livroEncontrado);
 });
 
-app.post("/livros", (req, res) => {
-  const body = req.body;
-  console.log(body);
-  if (!body) return res.status(STATUS_CODES.BAD_REQUEST).send();
-
-  const newBook = { ...body, id: livros.length + 1 };
-  livros.push(newBook);
-
-  res.status(STATUS_CODES.CREATED).json(newBook);
-});
-
 app.put("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
   const title = req.body.title;
