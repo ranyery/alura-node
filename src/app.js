@@ -1,6 +1,8 @@
 import express from "express";
 import { StatusCodes as STATUS_CODES } from "http-status-codes";
 
+import routes from "./routes/index.js";
+
 import db from "./config/dbConnect.js";
 import livros from "./models/Livro.js";
 
@@ -12,15 +14,7 @@ db.once("open", () => {
 const app = express();
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Curso de NodeJS");
-});
-
-app.get("/livros", (req, res) => {
-  livros.find((error, livros) => {
-    res.json(livros);
-  });
-});
+routes(app);
 
 app.get("/livros/:id", (req, res) => {
   const id = Number(req.params.id);
