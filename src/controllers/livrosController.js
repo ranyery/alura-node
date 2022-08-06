@@ -60,6 +60,16 @@ class livrosController {
       res.send({ message: "Book successfully updated." });
     });
   };
+
+  static excluirLivroPorId = (req, res) => {
+    const id = req.params["id"];
+
+    livros.findByIdAndDelete(id, (error) => {
+      if (error) return internalServerError(res, error);
+
+      res.status(STATUS_CODES.NO_CONTENT).send();
+    });
+  };
 }
 
 function internalServerError(res, error) {
