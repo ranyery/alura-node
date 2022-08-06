@@ -2,13 +2,14 @@
 import livros from "../models/Livro.js";
 import { StatusCodes as STATUS_CODES } from "http-status-codes";
 import { objectHasRequiredProperties } from "../utils/utils.js";
+import { badRequest, internalServerError } from "../utils/httpErrorHandler.js";
 
 class livrosController {
   static listarLivros = (req, res) => {
-    livros.find((error, livros) => {
+    livros.find((error, result) => {
       if (error) return internalServerError(res, error);
 
-      res.send(livros); // StatusCode 200 is set by default
+      res.send(result); // StatusCode 200 is set by default
     });
   };
 
@@ -70,16 +71,6 @@ class livrosController {
       res.status(STATUS_CODES.NO_CONTENT).send();
     });
   };
-}
-
-function internalServerError(res, error) {
-  return res
-    .status(STATUS_CODES.INTERNAL_SERVER_ERROR)
-    .send({ error: error.message });
-}
-
-function badRequest(res, message) {
-  return res.status(STATUS_CODES.BAD_REQUEST).send({ error: message });
 }
 
 export default livrosController;
