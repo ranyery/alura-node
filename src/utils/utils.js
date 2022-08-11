@@ -17,3 +17,13 @@ export function objectHasRequiredProperties(obj = {}, requiredProperties = []) {
 
   return { hasRequiredProperties, missingProperty };
 }
+
+export function removeNotRequiredProperties(obj = {}, requiredProperties = []) {
+  const newObject = {};
+
+  for (const property of requiredProperties) {
+    newObject[property] = obj[property];
+  }
+
+  return newObject;
+}
